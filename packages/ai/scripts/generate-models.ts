@@ -666,6 +666,14 @@ async function generateModels() {
 			candidate.cost.cacheRead = 0.5;
 			candidate.cost.cacheWrite = 6.25;
 		}
+		// Bedrock Opus 4.6 and Sonnet 4.6 support 1M context window.
+		// See: https://docs.anthropic.com/en/api/claude-on-amazon-bedrock#context-window
+		if (
+			candidate.provider === "amazon-bedrock" &&
+			(candidate.id.includes("claude-opus-4-6") || candidate.id.includes("claude-sonnet-4-6"))
+		) {
+			candidate.contextWindow = 1000000;
+		}
 		if (
 			(candidate.provider === "anthropic" ||
 				candidate.provider === "opencode" ||
@@ -731,7 +739,7 @@ async function generateModels() {
 				cacheRead: 0.5,
 				cacheWrite: 6.25,
 			},
-			contextWindow: 200000,
+			contextWindow: 1000000,
 			maxTokens: 128000,
 		});
 	}
